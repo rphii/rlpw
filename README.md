@@ -6,6 +6,8 @@ Multi-threaded background worker in C
 
 - requires [rphii/rphiic](https://github.com/rphii/rphiic)
 
-    git clone https://github.com/rphii/bgw && cd bgw
-    meson setup build && meson install -C build
+```sh
+git clone https://github.com/rphii/bgw && cd bgw
+meson setup build && meson install -C build
+```
 
