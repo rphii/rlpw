@@ -14,12 +14,7 @@ typedef struct Bgw_Sched {
     bool cancel;
     bool initialized;
     uint jobs;
-    struct {
-        uint count;
-        uint now;
-        uint end;
-    } available;
-    Bgw_Task **next;
+    uint ready;
 } Bgw_Sched;
 
 #define BGW_SCHED_H

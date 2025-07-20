@@ -19,11 +19,9 @@ bool bgw_is_busy(Bgw *bgw) {
     size_t len = array_len(bgw->queue.data);
     pthread_mutex_unlock(&bgw->queue.mutex);
     pthread_mutex_lock(&bgw->sched.mutex);
-    uint av = bgw->sched.available.count;
+    uint ready = bgw->sched.ready;
     pthread_mutex_unlock(&bgw->sched.mutex);
-    //printff("available %u", av);
-    return len || !(av == bgw->sched.jobs);
-    //return len;
+    return len || !(ready == bgw->sched.jobs);
 }
 
 void bgw_dispatch(Bgw *bgw) {
@@ -37,16 +35,17 @@ void bgw_dispatch(Bgw *bgw) {
     }
 }
 
-void bgw_free(Bgw *bgw) {
-    //printff("BGW FREE");
+void bgw_cancel(Bgw *bgw) {
     bgw->sched.cancel = true;
-    //printff("COND");
     pthread_mutex_lock(&bgw->sched.wait);
     for(uint i = 0; i < bgw->sched.jobs; ++i) {
         pthread_cond_signal(&bgw->sched.cond);
     }
     pthread_mutex_unlock(&bgw->sched.wait);
-    //printff("JOIN");
+}
+
+void bgw_free(Bgw *bgw) {
+    bgw_cancel(bgw);
     for(uint i = 0; i < bgw->sched.jobs; ++i) {
         Bgw_Task *task = array_it(bgw->tasks, i);
         pthread_join(task->thread, 0);
@@ -54,15 +53,5 @@ void bgw_free(Bgw *bgw) {
     array_free(bgw->queue);
     array_free(bgw->tasks);
     memset(bgw, 0, sizeof(*bgw));
-}
-
-void bgw_queue(Bgw *bgw, Bgw_Callback callback, void *data) {
-    ASSERT_ARG(bgw);
-    ASSERT_ARG(callback);
-    Bgw_User user = { .callback = callback, .data = data };
-    pthread_mutex_lock(&bgw->queue.mutex);
-    array_push(bgw->queue.data, user);
-    pthread_mutex_unlock(&bgw->queue.mutex);
-    pthread_cond_signal(&bgw->sched.cond);
 }
 

@@ -17,11 +17,11 @@ void *bgw_task(void *void_bgw_task) {
         if(!len) {
             ///printff("%2u ready", task->id);
             pthread_mutex_lock(&sched->mutex);
-            ++sched->available.count;
+            ++sched->ready;
             pthread_mutex_unlock(&sched->mutex);
             pthread_cond_wait(&sched->cond, &task->wait);
             pthread_mutex_lock(&sched->mutex);
-            --sched->available.count;
+            --sched->ready;
             pthread_mutex_unlock(&sched->mutex);
             ///printff("%2u woke up", task->id);
         }
