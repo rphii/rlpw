@@ -17,11 +17,12 @@ typedef struct Bgw {
     Bgw_Queue queue;
 } Bgw;
 
-void bgw_init(Bgw *bgw, uint jobs);
 bool bgw_is_busy(Bgw *bgw);
+
+void bgw_init(Bgw *bgw, uint jobs);
 void bgw_dispatch(Bgw *bgw);
+void bgw_cancel(Bgw *bgw);
 void bgw_free(Bgw *bgw);
-void bgw_queue(Bgw *bgw, Bgw_Callback callback, void *data);
 
 #define BGW_H
 #endif
