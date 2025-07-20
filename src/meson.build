@@ -15,7 +15,7 @@ headers = [
 
 dep_rphiic = dependency('rphiic', required: true)
 
-install_headers(headers, subdir: 'rphii')
+install_headers(headers, subdir: 'rphii/bgw')
 rphiibgw = library('rphiibgw',
   sources,
   dependencies: [dep_rphiic],
