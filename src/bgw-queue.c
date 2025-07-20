@@ -1,5 +1,6 @@
 #include <rphii/err.h>
 #include <rphii/array.h>
+#include <stdlib.h>
 #include "bgw.h"
 #include "bgw-queue.h"
 
