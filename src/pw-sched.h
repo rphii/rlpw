@@ -1,13 +1,13 @@
-#ifndef BGW_SCHED_H
+#ifndef RLPW_SCHED_H
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <pthread.h>
 #include <sys/types.h>
-#include "bgw-task.h"
+#include "pw-task.h"
 
-typedef struct Bgw_Sched {
+typedef struct Pw_Sched {
     pthread_mutex_t mutex;
     pthread_cond_t cond;
     pthread_mutex_t wait;
@@ -15,8 +15,8 @@ typedef struct Bgw_Sched {
     bool initialized;
     uint jobs;
     uint ready;
-} Bgw_Sched;
+} Pw_Sched;
 
-#define BGW_SCHED_H
+#define RLPW_SCHED_H
 #endif
 

@@ -1,13 +1,13 @@
-project('bgw', 'c',
+project('rlpt', 'c',
   meson_version: '>=1.1')
 
 subdir('src')
 
 pkg = import('pkgconfig')
 pkg.generate(
-  libraries: rphiibgw,
+  libraries: rlpw,
   version: '9999',
-  name: 'rphiibgw',
-  description: 'Multi-threaded background worker in C.',
+  name: 'rlpw',
+  description: 'Parallel worker in C',
   )
 
