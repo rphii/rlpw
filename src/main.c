@@ -1,7 +1,7 @@
-#include "bgw.h"
-#include <rphii/err.h>
-#include <rphii/str.h>
-#include <rphii/file.h>
+#include "pw.h"
+#include <rl/err.h>
+#include <rl/str.h>
+#include <rl/file.h>
 #include <unistd.h>
 
 typedef enum {
@@ -11,7 +11,7 @@ typedef enum {
 
 typedef struct Task {
     Task_List id;
-    Bgw *bgw;
+    Pw *pw;
     Str file_or_dir;
     VStr find;
 } Task;
@@ -127,7 +127,7 @@ int queue_walk(Str filename, void *void_task) {
     memcpy(q, t, sizeof(*q));
     q->id = TASK_WALK;
     q->file_or_dir = filename;
-    bgw_queue(q->bgw, task, q);
+    pw_queue(q->pw, task, q);
     return 0;
 }
 
@@ -137,7 +137,7 @@ int queue_file(Str filename, void *void_task) {
     memcpy(q, t, sizeof(*q));
     q->id = TASK_FILE;
     q->file_or_dir = filename;
-    bgw_queue(q->bgw, task, q);
+    pw_queue(q->pw, task, q);
     return 0;
 }
 
@@ -150,18 +150,18 @@ int main(int argc, char **argv) {
     char cwd[PATH_MAX];
     if(!getcwd(cwd, sizeof(cwd))) return -1;
     //printf("cwd:%.*s\n", STR_F(str_l(cwd)));
-    Bgw bgw = {0};
-    bgw_init(&bgw, 16);
-    bgw_dispatch(&bgw);
+    Pw pw = {0};
+    pw_init(&pw, 16);
+    pw_dispatch(&pw);
     Task task = {
-        .bgw = &bgw,
+        .pw = &pw,
     };
     for(int i = 1; i < argc; ++i) {
         array_push(task.find, str_l(argv[i]));
     }
     queue_walk(str_l(cwd), &task);
-    while(bgw_is_busy(&bgw)) { usleep(1000); }
-    bgw_free(&bgw);
+    while(pw_is_busy(&pw)) { usleep(1000); }
+    pw_free(&pw);
     array_free(task.find);
     //printff("done");
     return 0;
