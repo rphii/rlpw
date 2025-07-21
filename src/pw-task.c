@@ -1,16 +1,16 @@
-#include <rphii/err.h>
-#include <rphii/array.h>
+#include <rl/err.h>
+#include <rl/array.h>
 #include <stdlib.h>
-#include "bgw.h"
-#include "bgw-task.h"
-#include "bgw-sched.h"
+#include "pw.h"
+#include "pw-task.h"
+#include "pw-sched.h"
 #include <unistd.h>
 
-void *bgw_task(void *void_bgw_task) {
-    ASSERT_ARG(void_bgw_task);
-    Bgw_Task *task = void_bgw_task;
-    Bgw_Queue *queue = &task->bgw->queue;
-    Bgw_Sched *sched = &task->bgw->sched;
+void *pw_task(void *void_pw_task) {
+    ASSERT_ARG(void_pw_task);
+    Pw_Task *task = void_pw_task;
+    Pw_Queue *queue = &task->pw->queue;
+    Pw_Sched *sched = &task->pw->sched;
     size_t len = SIZE_MAX;
     //printff("%2u started", task->id);
     while(!sched->cancel) {
@@ -29,7 +29,7 @@ void *bgw_task(void *void_bgw_task) {
         pthread_mutex_lock(&queue->mutex);
         len = array_len(queue->data);
         if(len > 1) pthread_cond_signal(&sched->cond);
-        Bgw_User user = len > 0 ? array_pop(queue->data) : (Bgw_User){0};
+        Pw_User user = len > 0 ? array_pop(queue->data) : (Pw_User){0};
         pthread_mutex_unlock(&queue->mutex);
         if(len < 1) continue;
         --len;
