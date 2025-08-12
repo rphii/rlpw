@@ -1,24 +1,38 @@
 
 sources = [
-  'pw-queue.c',
-  'pw-task.c',
-  'pw.c',
+  'rlpw/pw-queue.c',
+  'rlpw/pw-task.c',
+  'rlpw/pw.c',
 ]
 
 headers = [
-  'pw-queue.h',
-  'pw-sched.h',
-  'pw-task.h',
-  'pw-user.h',
-  'pw.h',
+  'rlpw/pw-queue.h',
+  'rlpw/pw-sched.h',
+  'rlpw/pw-task.h',
+  'rlpw/pw-user.h',
+  'rlpw/pw.h',
   ]
 
-dep_rlc = dependency('rlc', required: true)
+rlc_dep = dependency('rlc', fallback : ['rlc', 'rlc_dep'], default_options: ['default_library=static'])
 
-install_headers(headers, subdir: 'rl')
-rlpw = library('rlpw',
+install_headers('rlpw.h')
+install_headers(headers, subdir: 'rlpw')
+librlpw = library('rlpw',
   sources,
-  dependencies: [dep_rlc],
+  dependencies: [rlc_dep],
   install: true,
+  )
+
+pkg = import('pkgconfig')
+pkg.generate(
+  libraries: librlpw,
+  version: '9999',
+  name: 'rlpw',
+  description: 'Parallel worker in C.',
+  )
+
+rlpw_dep = declare_dependency(
+  link_with: librlpw,
+  include_directories: '.',
   )
 

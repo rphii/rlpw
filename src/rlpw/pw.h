@@ -1,4 +1,4 @@
-#ifndef RLPW_H
+#ifndef RLPW_PW_H
 
 #include <stddef.h>
 #include <pthread.h>
@@ -24,6 +24,6 @@ void pw_dispatch(Pw *pw);
 void pw_cancel(Pw *pw);
 void pw_free(Pw *pw);
 
-#define RLPW_H
+#define RLPW_PW_H
 #endif
 

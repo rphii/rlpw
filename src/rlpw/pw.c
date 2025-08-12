@@ -2,8 +2,8 @@
 #include "pw-sched.h"
 
 #include <stdlib.h>
-#include <rl/err.h>
-#include <rl/array.h>
+#include <rlc/err.h>
+#include <rlc/array.h>
 #include <string.h>
 #include <unistd.h>
 
