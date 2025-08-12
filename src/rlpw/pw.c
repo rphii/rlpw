@@ -15,12 +15,19 @@ void pw_init(Pw *pw, uint jobs) {
 }
 
 bool pw_is_busy(Pw *pw) {
-    pthread_mutex_lock(&pw->queue.mutex);
-    size_t len = array_len(pw->queue.data);
-    pthread_mutex_unlock(&pw->queue.mutex);
-    pthread_mutex_lock(&pw->sched.mutex);
-    uint ready = pw->sched.ready;
-    pthread_mutex_unlock(&pw->sched.mutex);
+    size_t len;
+    uint ready;
+    bool lq = pthread_mutex_trylock(&pw->queue.mutex);
+    if(!lq) {
+        len = array_len(pw->queue.data);
+        pthread_mutex_unlock(&pw->queue.mutex);
+    }
+    bool ls = pthread_mutex_trylock(&pw->sched.mutex);
+    if(!ls) {
+        ready = pw->sched.ready;
+        pthread_mutex_unlock(&pw->sched.mutex);
+    }
+    if(ls || lq) return true;
     return len || !(ready == pw->sched.jobs);
 }
 
