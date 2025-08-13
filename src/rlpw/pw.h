@@ -15,6 +15,8 @@ typedef struct Pw {
     Pw_Sched sched;
     /* queue ::: queue holding user data */
     Pw_Queue queue;
+    /* when_done ::: called when queue is emptied */
+    Pw_User when_done;
 } Pw;
 
 bool pw_is_busy(Pw *pw);

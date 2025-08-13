@@ -11,12 +11,20 @@ void *pw_task(void *void_pw_task) {
     Pw_Task *task = void_pw_task;
     Pw_Queue *queue = &task->pw->queue;
     Pw_Sched *sched = &task->pw->sched;
+    Pw_User *when_done = &task->pw->when_done;
     size_t len = SIZE_MAX;
     //printff("%2u started", task->id);
     while(!sched->cancel) {
         if(!len) {
             ///printff("%2u ready", task->id);
             pthread_mutex_lock(&sched->mutex);
+            if(sched->ready + 1 == sched->jobs) {
+                if(!pthread_mutex_trylock(&queue->mutex)) {
+                    bool callback = !(array_len(queue->data));
+                    pthread_mutex_unlock(&queue->mutex);
+                    if(callback && when_done->callback) when_done->callback(when_done->data);
+                }
+            }
             ++sched->ready;
             pthread_mutex_unlock(&sched->mutex);
             pthread_cond_wait(&sched->cond, &task->wait);
