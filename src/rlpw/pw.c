@@ -21,13 +21,16 @@ bool pw_is_busy(Pw *pw) {
     if(!lq) {
         len = array_len(pw->queue.data);
         pthread_mutex_unlock(&pw->queue.mutex);
+    } else {
+        return true;
     }
     bool ls = pthread_mutex_trylock(&pw->sched.mutex);
     if(!ls) {
         ready = pw->sched.ready;
         pthread_mutex_unlock(&pw->sched.mutex);
+    } else {
+        return true;
     }
-    if(ls || lq) return true;
     return len || !(ready == pw->sched.jobs);
 }
 

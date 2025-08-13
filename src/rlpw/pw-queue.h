@@ -11,6 +11,8 @@ typedef struct Pw_Queue {
 } Pw_Queue;
 
 void pw_queue(Pw *pw, Pw_Callback callback, void *data);
+void pw_when_done(Pw *pw, Pw_Callback callback, void *data);
+void pw_when_done_clear(Pw *pw);
 
 #define BGW_QUEUE_H
 #endif
