@@ -50,6 +50,7 @@ void *task(void *void_task) {
             }
         } break;
         case TASK_WALK: {
+            //printf("w %.*s\n", SO_F(task->file_or_dir));
             so_file_exec(task->file_or_dir, true, true, queue_file, queue_walk, task);
         } break;
     }
@@ -64,7 +65,12 @@ int queue_walk(So filename, void *void_task) {
     memcpy(q, t, sizeof(*q));
     q->id = TASK_WALK;
     q->file_or_dir = filename;
+    pthread_mutex_lock(&m);
+    //printf("WALK %.*s\n", SO_F(q->file_or_dir));
+    //getchar();
+    pthread_mutex_unlock(&m);
     pw_queue(q->pw, task, q);
+    //printf("WALK NEXT\n");
     return 0;
 }
 
@@ -74,7 +80,11 @@ int queue_file(So filename, void *void_task) {
     memcpy(q, t, sizeof(*q));
     q->id = TASK_FILE;
     q->file_or_dir = filename;
+    pthread_mutex_lock(&m);
+    //printf("FILE %.*s\n", SO_F(q->file_or_dir));
+    pthread_mutex_unlock(&m);
     pw_queue(q->pw, task, q);
+    //printf("FILE NEXT\n");
     return 0;
 }
 
@@ -97,6 +107,7 @@ int main(int argc, char **argv) {
         array_push(task.find, so_l(argv[i]));
     }
     queue_walk(so_l(cwd), &task);
+    //while(true) { usleep(5000000); printf("sleep..\n"); }
     while(pw_is_busy(&pw)) { usleep(1000); }
     pw_free(&pw);
     array_free(task.find);

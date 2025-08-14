@@ -10,28 +10,26 @@
 void pw_init(Pw *pw, uint jobs) {
     ASSERT_ARG(pw);
     ASSERT_ARG(jobs);
-    pw->sched.jobs = jobs = jobs;
+    pw->sched.jobs  = jobs;
     array_resize(pw->tasks, jobs);
 }
 
 bool pw_is_busy(Pw *pw) {
-    size_t len;
+    Pw_Queue_Item *next = 0;
     uint ready;
-    bool lq = pthread_mutex_trylock(&pw->queue.mutex);
-    if(!lq) {
-        len = array_len(pw->queue.data);
+    if(!pthread_mutex_trylock(&pw->queue.mutex)) {
+        next = pw->queue.next;
         pthread_mutex_unlock(&pw->queue.mutex);
     } else {
         return true;
     }
-    bool ls = pthread_mutex_trylock(&pw->sched.mutex);
-    if(!ls) {
+    if(!pthread_mutex_trylock(&pw->sched.mutex)) {
         ready = pw->sched.ready;
         pthread_mutex_unlock(&pw->sched.mutex);
     } else {
         return true;
     }
-    return len || !(ready == pw->sched.jobs);
+    return (next != 0) || (ready != pw->sched.jobs);
 }
 
 void pw_dispatch(Pw *pw) {
