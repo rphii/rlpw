@@ -17,19 +17,16 @@ void pw_init(Pw *pw, uint jobs) {
 bool pw_is_busy(Pw *pw) {
     Pw_Queue_Item *next = 0;
     uint ready;
-    if(!pthread_mutex_trylock(&pw->queue.mutex)) {
-        next = pw->queue.next;
-        pthread_mutex_unlock(&pw->queue.mutex);
-    } else {
-        return true;
+    pthread_mutex_t *unlock;
+    bool busy = true;
+    if(pw_queue_is_empty_lock_context(pw, &unlock)) {
+        if(!pthread_mutex_trylock(&pw->sched.mutex)) {
+            busy = pw->sched.ready != pw->sched.jobs;
+            pthread_mutex_unlock(&pw->sched.mutex);
+        }
+        pthread_mutex_unlock(unlock);
     }
-    if(!pthread_mutex_trylock(&pw->sched.mutex)) {
-        ready = pw->sched.ready;
-        pthread_mutex_unlock(&pw->sched.mutex);
-    } else {
-        return true;
-    }
-    return (next != 0) || (ready != pw->sched.jobs);
+    return busy;
 }
 
 void pw_dispatch(Pw *pw) {
@@ -39,7 +36,7 @@ void pw_dispatch(Pw *pw) {
         task->pw = pw;
         task->id = i;
         err = pthread_create(&task->thread, 0, pw_task, task);
-        usleep(1000);
+        //usleep(1000);
     }
 }
 
