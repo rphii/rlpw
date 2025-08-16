@@ -5,6 +5,18 @@
 #include "pw-queue.h"
 #include <string.h>
 
+bool pw_queue_is_empty_lock_context(Pw *pw, pthread_mutex_t **unlock) {
+    ASSERT_ARG(pw);
+    if(!pthread_mutex_trylock(&pw->queue.mutex)) {
+        if(!pw->queue.next) {
+            *unlock = &pw->queue.mutex;
+            return true;
+        }
+        pthread_mutex_unlock(&pw->queue.mutex);
+    }
+    return false;
+}
+
 void pw_queue(Pw *pw, Pw_Callback callback, void *data) {
     ASSERT_ARG(pw);
     ASSERT_ARG(callback);
