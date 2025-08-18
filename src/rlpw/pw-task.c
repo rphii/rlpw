@@ -22,7 +22,7 @@ void *pw_task(void *void_pw_task) {
             pthread_mutex_unlock(unlock);
             //printff("%2u wait",task->id);
             pthread_mutex_unlock(&sched->mutex);
-            if(do_callback) when_done->callback(when_done->data);
+            if(do_callback) when_done->callback(task->pw, &sched->cancel, when_done->data);
             pthread_cond_wait(&sched->cond, &task->wait);
             pthread_mutex_lock(&sched->mutex);
             --sched->ready;
@@ -33,7 +33,7 @@ void *pw_task(void *void_pw_task) {
         user = pw_queue_pop_front(task->pw);
         if(user.callback) {
             //printff("%2u work",task->id);
-            user.callback(user.data);
+            user.callback(task->pw, &sched->cancel, user.data);
         }
     }
     //printff("%2u quit", task->id);

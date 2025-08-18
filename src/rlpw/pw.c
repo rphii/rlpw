@@ -15,8 +15,6 @@ void pw_init(Pw *pw, uint jobs) {
 }
 
 bool pw_is_busy(Pw *pw) {
-    Pw_Queue_Item *next = 0;
-    uint ready;
     pthread_mutex_t *unlock;
     bool busy = true;
     if(pw_queue_is_empty_lock_context(pw, &unlock)) {
@@ -29,15 +27,16 @@ bool pw_is_busy(Pw *pw) {
     return busy;
 }
 
-void pw_dispatch(Pw *pw) {
+int pw_dispatch(Pw *pw) {
     int err = 0;
-    for(size_t i = 0; i < pw->sched.jobs; ++i) {
+    for(size_t i = 0; !err && i < pw->sched.jobs; ++i) {
         Pw_Task *task = array_it(pw->tasks, i);
         task->pw = pw;
         task->id = i;
         err = pthread_create(&task->thread, 0, pw_task, task);
         //usleep(1000);
     }
+    return err;
 }
 
 void pw_cancel(Pw *pw) {
