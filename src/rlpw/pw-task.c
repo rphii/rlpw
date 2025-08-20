@@ -19,11 +19,14 @@ void *pw_task(void *void_pw_task) {
         if(pw_queue_is_empty_lock_context(task->pw, &unlock)) {
             pthread_mutex_lock(&sched->mutex);
             bool do_callback = ++sched->ready == sched->jobs && when_done->callback && !queue->next;
-            pthread_mutex_unlock(unlock);
             //printff("%2u wait",task->id);
             pthread_mutex_unlock(&sched->mutex);
-            if(do_callback) when_done->callback(task->pw, &sched->cancel, when_done->data);
-            pthread_cond_wait(&sched->cond, &task->wait);
+            pthread_mutex_unlock(unlock);
+            if(do_callback) {
+                when_done->callback(task->pw, &sched->cancel, when_done->data);
+            } else {
+                pthread_cond_wait(&sched->cond, &task->wait);
+            }
             pthread_mutex_lock(&sched->mutex);
             --sched->ready;
             //printff("%2u woke up", task->id);
