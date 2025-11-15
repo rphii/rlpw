@@ -8,7 +8,7 @@ typedef struct Pw Pw;
 typedef struct Pw_Sched Pw_Sched;
 
 typedef struct Pw_Task {
-    uint id;
+    unsigned int id;
     pthread_t thread;
     pthread_mutex_t wait;
     bool initialized;

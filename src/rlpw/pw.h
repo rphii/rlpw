@@ -21,8 +21,8 @@ typedef struct Pw {
 
 bool pw_is_busy(Pw *pw);
 
-void pw_init(Pw *pw, uint jobs);
-int pw_dispatch(Pw *pw);
+void pw_init(Pw *pw, unsigned int jobs);
+void pw_dispatch(Pw *pw);
 void pw_cancel(Pw *pw);
 void pw_free(Pw *pw);
 
