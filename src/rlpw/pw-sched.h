@@ -13,8 +13,8 @@ typedef struct Pw_Sched {
     pthread_mutex_t wait;
     bool cancel;
     bool initialized;
-    uint jobs;
-    uint ready;
+    unsigned int jobs;
+    unsigned int ready;
 } Pw_Sched;
 
 #define RLPW_SCHED_H

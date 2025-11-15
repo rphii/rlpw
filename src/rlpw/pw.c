@@ -7,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-void pw_init(Pw *pw, uint jobs) {
+void pw_init(Pw *pw, unsigned int jobs) {
     ASSERT_ARG(pw);
     ASSERT_ARG(jobs);
     pw->sched.jobs  = jobs;
@@ -42,7 +42,7 @@ int pw_dispatch(Pw *pw) {
 void pw_cancel(Pw *pw) {
     pw->sched.cancel = true;
     pthread_mutex_lock(&pw->sched.wait);
-    for(uint i = 0; i < pw->sched.jobs; ++i) {
+    for(unsigned int i = 0; i < pw->sched.jobs; ++i) {
         pthread_cond_signal(&pw->sched.cond);
     }
     pthread_mutex_unlock(&pw->sched.wait);
@@ -50,7 +50,7 @@ void pw_cancel(Pw *pw) {
 
 void pw_free(Pw *pw) {
     pw_cancel(pw);
-    for(uint i = 0; i < pw->sched.jobs; ++i) {
+    for(unsigned int i = 0; i < pw->sched.jobs; ++i) {
         Pw_Task *task = array_it(pw->tasks, i);
         pthread_join(task->thread, 0);
     }
