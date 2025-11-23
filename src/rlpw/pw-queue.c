@@ -49,8 +49,8 @@ void pw_queue_front(Pw *pw, Pw_Callback callback, void *data) {
     add->data = user;
     pthread_mutex_lock(&pw->queue.mutex);
     //printff(" Q ADD");
-    if(pw->queue.last) {
-        add->next = add;
+    if(pw->queue.next) {
+        add->next = pw->queue.next;
         pw->queue.next = add;
     } else {
         //printff(" Q LAST = ADD");
