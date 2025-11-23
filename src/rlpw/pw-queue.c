@@ -40,6 +40,27 @@ void pw_queue(Pw *pw, Pw_Callback callback, void *data) {
     pthread_cond_signal(&pw->sched.cond);
 }
 
+void pw_queue_front(Pw *pw, Pw_Callback callback, void *data) {
+    ASSERT_ARG(pw);
+    ASSERT_ARG(callback);
+    Pw_User user = { .callback = callback, .data = data };
+    Pw_Queue_Item *add = 0;
+    NEW(Pw_Queue_Item, add);
+    add->data = user;
+    pthread_mutex_lock(&pw->queue.mutex);
+    //printff(" Q ADD");
+    if(pw->queue.last) {
+        add->next = add;
+        pw->queue.next = add;
+    } else {
+        //printff(" Q LAST = ADD");
+        pw->queue.last = add;
+        pw->queue.next = add;
+    }
+    pthread_mutex_unlock(&pw->queue.mutex);
+    pthread_cond_signal(&pw->sched.cond);
+}
+
 Pw_User pw_queue_pop_front(Pw *pw) {
     Pw_User result = {0};
     pthread_mutex_lock(&pw->queue.mutex);
