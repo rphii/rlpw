@@ -18,6 +18,7 @@ typedef struct Pw_Queue {
 
 bool pw_queue_is_empty_lock_context(Pw *pw, pthread_mutex_t **unlock);
 void pw_queue(Pw *pw, Pw_Callback callback, void *data);
+void pw_queue_front(Pw *pw, Pw_Callback callback, void *data);
 Pw_User pw_queue_pop_front(Pw *pw);
 void pw_when_done(Pw *pw, Pw_Callback callback, void *data);
 void pw_when_done_clear(Pw *pw);
