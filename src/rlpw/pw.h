@@ -24,7 +24,6 @@ bool pw_is_busy(Pw *pw);
 void pw_init(Pw *pw, unsigned int jobs);
 int pw_dispatch(Pw *pw);
 void pw_cancel(Pw *pw);
-void pw_join(Pw *pw);
 void pw_free(Pw *pw);
 
 #define RLPW_PW_H
