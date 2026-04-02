@@ -48,6 +48,13 @@ void pw_cancel(Pw *pw) {
     pthread_mutex_unlock(&pw->sched.wait);
 }
 
+void pw_join(Pw *pw) {
+    for(unsigned int i = 0; i < pw->sched.jobs; ++i) {
+        Pw_Task *task = array_it(pw->tasks, i);
+        pthread_join(task->thread, 0);
+    }
+}
+
 void pw_free(Pw *pw) {
     pw_cancel(pw);
     for(unsigned int i = 0; i < pw->sched.jobs; ++i) {
