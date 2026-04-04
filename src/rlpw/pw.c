@@ -54,7 +54,9 @@ void pw_free(Pw *pw) {
         Pw_Task *task = array_it(pw->tasks, i);
         pthread_join(task->thread, 0);
     }
-    array_free(pw->queue);
+    while(pw->queue.next) {
+        pw_queue_pop_front(pw);
+    }
     array_free(pw->tasks);
     memset(pw, 0, sizeof(*pw));
 }
