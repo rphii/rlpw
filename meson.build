@@ -1,4 +1,4 @@
-project('rlpt', 'c', meson_version: '>=1.1', version: '0.0.1')
+project('rlpw', 'c', meson_version: '>=1.1', version: '0.1.0')
 
 subdir('src')
 

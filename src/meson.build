@@ -26,7 +26,7 @@ librlpw = library('rlpw',
 pkg = import('pkgconfig')
 pkg.generate(
   libraries: librlpw,
-  version: '9999',
+  version: meson.project_version(),
   name: 'rlpw',
   description: 'Parallel worker in C.',
   )
